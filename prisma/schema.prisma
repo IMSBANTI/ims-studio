@@ -1,0 +1,188 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String          @id @default(uuid())
+  email           String          @unique
+  password        String
+  name            String
+  roleName        String          // Admin, Sr. Studio Manager, Manager, Visualizer
+  departmentName  String          // 2D LED, 3D LED, Business Development
+  phone           String?
+  status          String          @default("Active") // Active / Inactive
+  skillTags       String          // Comma-separated list of skills
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  managedProjects Project[]       @relation("ProjectManager")
+  tasks           Task[]          @relation("TaskAssignee")
+  timeLogs        TimeLog[]
+  comments        Comment[]
+  notifications   Notification[]
+  projects        ProjectMember[]
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Role {
+  id             String   @id @default(uuid())
+  name           String   @unique
+  departmentName String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Project {
+  id                 String                     @id @default(uuid())
+  name               String
+  clientName         String
+  briefReceivedDate  DateTime
+  projectSource      String                     // Direct Client, Business Development Team, Existing Client, Referral, Other
+  briefStatus        String                     // Received, Need Clarification, Confirmed, In Progress, Revised Brief Received
+  projectType        String                     // Event, Stage Design, Booth, Exhibition, Tunnel, LED Content, 3D Render, Walkthrough, Graphic Design, Motion Graphic, Technical Drawing, Other
+  departmentInvolved String                     // 2D LED, 3D LED, Both
+  startDate          DateTime
+  deadline           DateTime
+  priority           String                     // Low, Medium, High, Urgent
+  status             String                     // Not Started, In Progress, On Hold, Review, Revision, Completed, Delivered, Cancelled
+  projectBrief       String
+  notes              String?
+  originalBriefUrl   String?
+  referenceLink      String?                    // Google Drive, Dropbox, or reference link
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  
+  managerId          String?
+  manager            User?                      @relation("ProjectManager", fields: [managerId], references: [id])
+  
+  bdSource           BusinessDevelopmentSource?
+  tasks              Task[]
+  timeLogs           TimeLog[]
+  members            ProjectMember[]
+  comments           Comment[]
+  attachments        Attachment[]
+}
+
+model ProjectMember {
+  projectId String
+  userId    String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+model Task {
+  id             String       @id @default(uuid())
+  title          String
+  description    String
+  assignedUserId String
+  assignedUser   User         @relation("TaskAssignee", fields: [assignedUserId], references: [id], onDelete: Cascade)
+  departmentName String       // 2D LED, 3D LED
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  startDate      DateTime
+  dueDate        DateTime
+  estimatedHours Float
+  actualHours    Float        @default(0.0)
+  priority       String       // Low, Medium, High, Urgent
+  status         String       // To Do, In Progress, Review, Revision, Completed
+  completionDate DateTime?
+  notes          String?
+  attachmentUrl  String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
+  timeLogs       TimeLog[]
+  comments       Comment[]
+  attachments    Attachment[]
+}
+
+model TimeLog {
+  id           String   @id @default(uuid())
+  date         DateTime
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hours        Float
+  workNote     String
+  statusUpdate String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  type      String   // TaskDeadline, TaskOverdue, ProjectDeadline, TaskAssigned, TaskRevision, RevisedBriefReceived, BriefClarification, ProjectCompleted
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model BusinessDevelopmentSource {
+  id                   String   @id @default(uuid())
+  project_id           String   @unique
+  project              Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  bd_member_name       String
+  bd_member_email      String
+  brief_received_date  DateTime
+  brief_status         String   // Received, Need Clarification, Confirmed, In Progress, Revised Brief Received
+  project_source       String   // Direct Client, Business Development Team, Existing Client, Referral, Other
+  bd_notes             String?
+  brief_attachment_url String?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+}
+
+model ProjectType {
+  id   String @id @default(uuid())
+  name String @unique
+}
+
+model TaskStatus {
+  id   String @id @default(uuid())
+  name String @unique
+}
