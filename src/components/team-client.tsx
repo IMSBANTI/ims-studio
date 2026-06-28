@@ -228,8 +228,8 @@ export const TeamClient: React.FC<TeamClientProps> = ({
                   <TableRow key={member.id} className={member.status !== "Active" ? "opacity-60" : ""}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-studio-red/10 border border-studio-red/20 flex items-center justify-center font-bold text-studio-red text-xs">
-                          {member.name.charAt(0)}
+                        <div className="w-8 h-8 rounded-full bg-studio-red/10 border border-studio-red/20 flex items-center justify-center font-bold text-studio-red text-xs shrink-0">
+                          {member.name.trim().charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <span className="font-bold text-studio-black">{member.name}</span>
