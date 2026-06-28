@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { SettingsClient } from "@/components/settings-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const user = getSession();
   if (!user) {

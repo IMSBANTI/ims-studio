@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { BDClient } from "@/components/bd-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function BDPage() {
   const currentUser = getSession();
   if (!currentUser) {

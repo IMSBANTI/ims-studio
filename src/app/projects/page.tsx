@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { ProjectsClient } from "@/components/projects-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectsPage() {
   const user = getSession();
   if (!user) {

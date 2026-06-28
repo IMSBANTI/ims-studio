@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { ReportsClient } from "@/components/reports-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function ReportsPage() {
   const user = getSession();
   if (!user) {

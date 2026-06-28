@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { ProjectDetailsClient } from "@/components/project-details-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
   const user = getSession();
   if (!user) {

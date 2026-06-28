@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { DashboardClient } from "@/components/dashboard-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const user = getSession();
   if (!user) {

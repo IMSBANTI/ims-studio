@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { CalendarClient } from "@/components/calendar-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function CalendarPage() {
   const user = getSession();
   if (!user) {

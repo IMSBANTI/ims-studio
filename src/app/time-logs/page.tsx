@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { TimeLogsClient } from "@/components/time-logs-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function TimeLogsPage() {
   const user = getSession();
   if (!user) {

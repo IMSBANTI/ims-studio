@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { TasksClient } from "@/components/tasks-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function TasksPage() {
   const user = getSession();
   if (!user) {
