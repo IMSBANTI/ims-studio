@@ -9,8 +9,8 @@ import { Modal } from "@/components/ui/modal";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/toast";
 import { SessionUser } from "@/lib/auth";
-import { createTeamMemberAction, updateTeamMemberAction } from "@/app/actions/team";
-import { Search, Plus, Edit, UserX, UserCheck, Shield } from "lucide-react";
+import { createTeamMemberAction, updateTeamMemberAction, deleteTeamMemberAction } from "@/app/actions/team";
+import { Search, Plus, Edit, UserX, UserCheck, Shield, Trash2 } from "lucide-react";
 
 interface TeamClientProps {
   currentUser: SessionUser;
@@ -112,6 +112,23 @@ export const TeamClient: React.FC<TeamClientProps> = ({
       }
     } catch (e) {
       toast("Error updating status", "error");
+    }
+  };
+
+  const handleDelete = async (member: any) => {
+    if (!confirm(`Are you sure you want to PERMANENTLY delete ${member.name}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const res = await deleteTeamMemberAction(member.id);
+      if (res.success) {
+        toast("Team member deleted permanently", "success");
+      } else {
+        toast(res.error || "Failed to delete member", "error");
+      }
+    } catch (e) {
+      toast("Error deleting member", "error");
     }
   };
 
@@ -275,6 +292,15 @@ export const TeamClient: React.FC<TeamClientProps> = ({
                             ) : (
                               <UserCheck className="w-4 h-4 text-green-600" />
                             )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="p-1.5"
+                            onClick={() => handleDelete(member)}
+                            title="Delete Member Permanently"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
                           </Button>
                         </div>
                       </TableCell>

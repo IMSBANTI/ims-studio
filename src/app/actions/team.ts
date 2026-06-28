@@ -88,3 +88,28 @@ export async function updateTeamMemberAction(
     return { error: error?.message || "Failed to update team member" };
   }
 }
+
+export async function deleteTeamMemberAction(id: string) {
+  try {
+    const timeLogsCount = await prisma.timeLog.count({ where: { userId: id } });
+    const tasksCount = await prisma.task.count({ where: { assignedUserId: id } });
+    const commentsCount = await prisma.comment.count({ where: { userId: id } });
+
+    if (timeLogsCount > 0 || tasksCount > 0 || commentsCount > 0) {
+      return {
+        error: "This team member has logged hours, tasks, or comments in the system and cannot be permanently deleted. Please deactivate their account instead to keep records intact.",
+      };
+    }
+
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    revalidatePath("/team");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Delete team member error: ", error);
+    return { error: error?.message || "Failed to delete team member" };
+  }
+}
