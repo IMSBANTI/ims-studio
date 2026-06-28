@@ -72,7 +72,7 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
 
   const canCreate = currentUser.roleName === "Admin" || currentUser.roleName === "Sr. Studio Manager" || currentUser.roleName === "BD Representative";
   const canDelete = currentUser.roleName === "Admin";
-  const canEdit = currentUser.roleName === "Admin" || currentUser.roleName === "Sr. Studio Manager" || currentUser.roleName === "Manager" || currentUser.roleName === "BD Representative";
+  const canEdit = currentUser.roleName === "Admin" || currentUser.roleName === "Sr. Studio Manager" || currentUser.roleName === "Manager";
 
   // Filter projects locally
   const filteredProjects = useMemo(() => {
