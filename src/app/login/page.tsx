@@ -39,7 +39,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md border-zinc-800 bg-[#18181B] text-white shadow-2xl">
         <CardHeader className="space-y-2 text-center pb-8 border-zinc-800">
           <div className="mx-auto flex items-center justify-center mb-2">
-            <img src="/images/ims-logo-c.png" alt="IMS Studio Logo" className="h-16 w-auto object-contain" />
+            <img src="/images/ims-logo-white.png" alt="IMS Studio Logo" className="h-16 w-auto object-contain" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-white">IMS Studio</CardTitle>
           <CardDescription className="text-zinc-400 text-sm">
