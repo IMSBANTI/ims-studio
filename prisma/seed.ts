@@ -160,8 +160,63 @@ async function main() {
   // 7. Create Sample Projects, BD Sources, Members, Tasks, Time Logs
   const baseDate = new Date();
 
-  // Project 1
+  // Create Sample Submissions first
   const project1Date = new Date(baseDate.getFullYear(), baseDate.getMonth(), 5);
+  const submission1 = await prisma.submission.create({
+    data: {
+      title: "Concert Stage Design Pitch 2026",
+      clientName: "LiveNation Global",
+      eventName: "LiveNation Annual Concert",
+      submissionDate: project1Date,
+      status: "Won",
+      notes: "Client loved the immersive curved screen concept. Approved for studio production.",
+      budget: 650000,
+      presentationUrl: "https://drive.google.com/file/d/livenation-stage-ppt",
+      attachmentUrl: "https://drive.google.com/file/d/livenation-costing-xls",
+      reusableTags: "Stage Design, Concert, Curved Screen, Neon",
+      reusabilityScore: "High",
+      bdRepId: users["bd.sarah@ims.studio"].id,
+    }
+  });
+
+  const project2Date = new Date(baseDate.getFullYear(), baseDate.getMonth(), 8);
+  const submission2 = await prisma.submission.create({
+    data: {
+      title: "Apex Cyberpunk LED Walking Tunnel Pitch",
+      clientName: "Apex Corporation",
+      eventName: "Apex Tech Summit Expo",
+      submissionDate: project2Date,
+      status: "Lost",
+      lossReason: "Competitor submitted lower execution costing package.",
+      notes: "The 3D design of the 50m long cyberpunk generative LED tunnel is spectacular and highly reusable for any upcoming walk-through or tunnel expo designs.",
+      budget: 1200000,
+      presentationUrl: "https://drive.google.com/file/d/apex-tunnel-ppt",
+      attachmentUrl: "https://drive.google.com/file/d/apex-costing-xls",
+      reusableTags: "LED Tunnel, Cyberpunk, Walkthrough, Generative, Expo",
+      reusabilityScore: "High",
+      bdRepId: users["bd.john@ims.studio"].id,
+    }
+  });
+
+  const project3Date = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1, 1);
+  const submission3 = await prisma.submission.create({
+    data: {
+      title: "Global Tech Summit Booth Design",
+      clientName: "TechSummit Org",
+      eventName: "Tech Summit Expo 2026",
+      submissionDate: project3Date,
+      status: "Won",
+      notes: "Compact double-decker layout was accepted with minor branding adjustments.",
+      budget: 350000,
+      presentationUrl: "https://drive.google.com/file/d/techsummit-booth-ppt",
+      attachmentUrl: "https://drive.google.com/file/d/techsummit-costing-xls",
+      reusableTags: "Booth, Expo, Double-Decker, Tech",
+      reusabilityScore: "Medium",
+      bdRepId: users["bd.sarah@ims.studio"].id,
+    }
+  });
+
+  // Project 1
   const project1 = await prisma.project.create({
     data: {
       name: "Concert Stage Design 2026",
@@ -180,6 +235,9 @@ async function main() {
       originalBriefUrl: "https://drive.google.com/file/d/ims-concert-stage-brief",
       referenceLink: "https://dropbox.com/sh/ims-concert-stage-assets",
       managerId: users["sr.manager2d@ims.studio"].id,
+      budget: 650000,
+      actualCost: 450000,
+      submissionId: submission1.id,
     }
   });
 
@@ -261,7 +319,6 @@ async function main() {
   });
 
   // Project 2
-  const project2Date = new Date(baseDate.getFullYear(), baseDate.getMonth(), 8);
   const project2 = await prisma.project.create({
     data: {
       name: "Futuristic LED Tunnel Expo",
@@ -280,6 +337,9 @@ async function main() {
       originalBriefUrl: "https://drive.google.com/file/d/ims-tunnel-brief",
       referenceLink: "https://drive.google.com/drive/ims-tunnel-references",
       managerId: users["sr.manager3d@ims.studio"].id,
+      budget: 1200000,
+      actualCost: 0,
+      submissionId: submission2.id,
     }
   });
 
@@ -321,7 +381,6 @@ async function main() {
   });
 
   // Project 3 (Completed Project)
-  const project3Date = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1, 1);
   const project3 = await prisma.project.create({
     data: {
       name: "Global Tech Summit Booth",
@@ -339,6 +398,9 @@ async function main() {
       notes: "Successfully delivered. Positive feedback received.",
       originalBriefUrl: "https://drive.google.com/file/d/ims-booth-brief",
       managerId: users["sr.manager2d@ims.studio"].id,
+      budget: 350000,
+      actualCost: 280000,
+      submissionId: submission3.id,
     }
   });
 
@@ -353,6 +415,7 @@ async function main() {
       bd_notes: "Repeat business. Prompt delivery is required.",
     }
   });
+
 
   await prisma.projectMember.create({
     data: {

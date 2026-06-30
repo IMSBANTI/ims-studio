@@ -24,6 +24,8 @@ export async function createProjectAction(data: {
   bdMemberEmail: string;
   bdNotes?: string;
   memberIds: string[];
+  budget?: number;
+  actualCost?: number;
 }) {
   try {
     const briefDate = new Date(data.briefReceivedDate);
@@ -49,6 +51,8 @@ export async function createProjectAction(data: {
         originalBriefUrl: data.originalBriefUrl,
         referenceLink: data.referenceLink,
         managerId: data.managerId || null,
+        budget: data.budget ? parseFloat(data.budget.toString()) : null,
+        actualCost: data.actualCost ? parseFloat(data.actualCost.toString()) : null,
       },
     });
 
@@ -108,6 +112,8 @@ export async function updateProjectAction(
     bdMemberEmail: string;
     bdNotes?: string;
     memberIds: string[];
+    budget?: number;
+    actualCost?: number;
   }
 ) {
   try {
@@ -135,6 +141,8 @@ export async function updateProjectAction(
         originalBriefUrl: data.originalBriefUrl,
         referenceLink: data.referenceLink,
         managerId: data.managerId || null,
+        budget: data.budget ? parseFloat(data.budget.toString()) : null,
+        actualCost: data.actualCost ? parseFloat(data.actualCost.toString()) : null,
       },
     });
 

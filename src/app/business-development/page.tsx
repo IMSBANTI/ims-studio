@@ -21,6 +21,24 @@ export default async function BDPage() {
     },
   });
 
+  // Load all submissions with their BD Rep and projects
+  const submissions = await prisma.submission.findMany({
+    include: {
+      bdRep: true,
+      projects: true,
+    },
+    orderBy: {
+      submissionDate: "desc",
+    },
+  });
+
+  // Load all projects for linking to submissions
+  const allProjects = await prisma.project.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   // Load all BD representatives from the User table
   const bdReps = await prisma.user.findMany({
     where: {
@@ -41,6 +59,8 @@ export default async function BDPage() {
       (p) => p.bdSource && p.bdSource.bd_member_name.toLowerCase() === rep.name.toLowerCase()
     );
 
+    const repSubmissions = submissions.filter((s) => s.bdRepId === rep.id);
+
     const monthlyCount = repProjects.filter(
       (p) => new Date(p.briefReceivedDate) >= startOfMonth
     ).length;
@@ -57,6 +77,12 @@ export default async function BDPage() {
       (p) => p.status === "Completed" || p.status === "Delivered"
     ).length;
 
+    // Calculate submissions metrics
+    const totalSubmissions = repSubmissions.length;
+    const wonCount = repSubmissions.filter((s) => s.status === "Won").length;
+    const lostCount = repSubmissions.filter((s) => s.status === "Lost").length;
+    const winRate = totalSubmissions > 0 ? Math.round((wonCount / (wonCount + lostCount || 1)) * 100) : 0;
+
     return {
       id: rep.id,
       name: rep.name,
@@ -68,6 +94,10 @@ export default async function BDPage() {
       confirmedCount,
       pendingClarification,
       completedProjects,
+      totalSubmissions,
+      wonCount,
+      lostCount,
+      winRate,
     };
   });
 
@@ -76,6 +106,9 @@ export default async function BDPage() {
       currentUser={currentUser!}
       bdRepresentatives={bdData}
       projects={bdProjects}
+      submissions={submissions}
+      allProjects={allProjects}
     />
   );
 }
+

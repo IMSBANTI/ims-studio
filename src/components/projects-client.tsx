@@ -68,6 +68,8 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
     bdMemberEmail: "",
     bdNotes: "",
     memberIds: [] as string[],
+    budget: "",
+    actualCost: "",
   });
 
   const canCreate = currentUser.roleName === "Admin" || currentUser.roleName === "Sr. Studio Manager" || currentUser.roleName === "BD Representative";
@@ -144,6 +146,8 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
       bdMemberEmail: "",
       bdNotes: "",
       memberIds: [],
+      budget: "",
+      actualCost: "",
     });
     setIsModalOpen(true);
   };
@@ -171,6 +175,8 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
       bdMemberEmail: project.bdSource?.bd_member_email || "",
       bdNotes: project.bdSource?.bd_notes || "",
       memberIds: project.members.map((m: any) => m.userId),
+      budget: project.budget?.toString() || "",
+      actualCost: project.actualCost?.toString() || "",
     });
     setIsModalOpen(true);
   };
@@ -193,13 +199,16 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    const payload = {
+      ...formData,
+      budget: formData.budget ? parseFloat(formData.budget) : undefined,
+      actualCost: formData.actualCost ? parseFloat(formData.actualCost) : undefined,
+    };
 
     try {
       if (editingProject) {
         // Edit Mode
-        const res = await updateProjectAction(editingProject.id, formData);
+        const res = await updateProjectAction(editingProject.id, payload);
         if (res.success) {
           toast("Project updated successfully", "success");
           setIsModalOpen(false);
@@ -208,7 +217,7 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
         }
       } else {
         // Create Mode
-        const res = await createProjectAction(formData);
+        const res = await createProjectAction(payload);
         if (res.success) {
           toast("Project created successfully", "success");
           setIsModalOpen(false);
@@ -550,6 +559,29 @@ export const ProjectsClient: React.FC<ProjectsClientProps> = ({
                   placeholder="https://drive.google.com/..."
                   value={formData.referenceLink}
                   onChange={(e) => setFormData({ ...formData, referenceLink: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label htmlFor="budget">Estimated Budget (৳)</Label>
+                <Input
+                  id="budget"
+                  type="number"
+                  placeholder="e.g. 500000"
+                  value={formData.budget}
+                  onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="actualCost">Actual Cost (৳)</Label>
+                <Input
+                  id="actualCost"
+                  type="number"
+                  placeholder="e.g. 400000"
+                  value={formData.actualCost}
+                  onChange={(e) => setFormData({ ...formData, actualCost: e.target.value })}
                 />
               </div>
             </div>

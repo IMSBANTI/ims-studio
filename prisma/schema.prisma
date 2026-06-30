@@ -26,6 +26,7 @@ model User {
   comments        Comment[]
   notifications   Notification[]
   projects        ProjectMember[]
+  submissions     Submission[]    @relation("BDRepSubmissions")
 }
 
 model Department {
@@ -72,6 +73,11 @@ model Project {
   members            ProjectMember[]
   comments           Comment[]
   attachments        Attachment[]
+  
+  budget             Float?
+  actualCost         Float?
+  submissionId       String?
+  submission         Submission?                @relation("SubmissionProjects", fields: [submissionId], references: [id], onDelete: SetNull)
 }
 
 model ProjectMember {
@@ -186,3 +192,29 @@ model TaskStatus {
   id   String @id @default(uuid())
   name String @unique
 }
+
+model Submission {
+  id                String    @id @default(uuid())
+  title             String    // Submission / Event Title (e.g. "DHL Gala Dinner 2026")
+  clientName        String    // Target Client
+  eventName         String    // Event Name
+  eventDate         DateTime? // When the event happens
+  submissionDate    DateTime  // Date the pitch is submitted
+  status            String    // Draft, In Prep, Submitted, Won, Lost
+  lossReason        String?   // Reason if lost
+  reusabilityScore  String?   // High, Medium, Low
+  notes             String?   // Handover comments / notes
+  presentationUrl   String?   // PPT/presentation link
+  attachmentUrl     String?   // Excel costing sheet / brief file link
+  budget            Float?    // Overall pitch budget/revenue estimate
+  reusableTags      String    // Comma-separated search tags (e.g. "Gala, Cyberpunk, LED Tunnel")
+  
+  bdRepId           String
+  bdRep             User      @relation("BDRepSubmissions", fields: [bdRepId], references: [id])
+  
+  projects          Project[] @relation("SubmissionProjects")
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+

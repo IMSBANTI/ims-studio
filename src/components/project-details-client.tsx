@@ -288,7 +288,7 @@ export const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({
           </CardHeader>
           <CardContent className="space-y-6 text-sm">
             {/* Metadata pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-studio-gray-bg rounded-lg border border-studio-gray-border">
+            <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 p-4 bg-studio-gray-bg rounded-lg border border-studio-gray-border">
               <div>
                 <span className="text-[10px] uppercase font-bold text-studio-gray-text">Type</span>
                 <p className="font-semibold mt-0.5">{project.projectType}</p>
@@ -304,6 +304,14 @@ export const ProjectDetailsClient: React.FC<ProjectDetailsClientProps> = ({
               <div>
                 <span className="text-[10px] uppercase font-bold text-studio-gray-text">Deadline</span>
                 <p className="font-semibold text-studio-red mt-0.5">{new Date(project.deadline).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-studio-gray-text">Est. Budget</span>
+                <p className="font-semibold text-green-700 mt-0.5">৳{project.budget ? project.budget.toLocaleString() : "0"}</p>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-studio-gray-text">Actual Cost</span>
+                <p className="font-semibold text-zinc-700 mt-0.5">৳{project.actualCost ? project.actualCost.toLocaleString() : "0"}</p>
               </div>
             </div>
 
